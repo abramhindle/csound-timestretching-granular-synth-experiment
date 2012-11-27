@@ -26,6 +26,7 @@ nchnls	=  1
 giImpulse     ftgen   666, 0, 65536, 1,   "chicken.wav", 0, 0, 0	;mono file, duration 0.750
 giImpulse     ftgen   777, 0, 2097152, 1, "hurricane.wav", 0, 0, 0	;mono file, duration 40 seconds
 giImpulse     ftgen   888, 0, 16777216, 1, "videogames.wav", 0, 0, 0	;mono file, duration 40 seconds
+giImpulse     ftgen   999, 0, 16777216, 1, "goldberg-aria-da-capo.wav", 0, 0, 0	;mono file, duration 40 seconds
 
 gkFreq init 1
 gkFreqRand init 0.001
@@ -162,7 +163,8 @@ a1	grain3	kfrq, kphs, kfmd, kfmd, kgdur, kdens, 601,		\
 <CsScore>
 
 t 0 60
-i 777 0 3600  1000   0.00236570835113525390 888
+;i 777 0 3600  1000   0.00236570835113525390 888
+i 777 0 3600  1000   0.00236570835113525390 999
 
 ;i 1 0 3
 ;i 2 4 3
