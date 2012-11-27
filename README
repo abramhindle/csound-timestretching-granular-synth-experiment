@@ -1,0 +1,17 @@
+chicken.wav - Abram saying Chicken (Public Domain)
+goldberg-aria-da-capo.wav - Goldberg Variations - Aria Da Capo from the MusOpen DVD (support MusOpen.org!) (Public Domain)
+hurricane.wav - Hurricane Balls Recording (Public Domain)
+videogames.wav - Lana Del Ray - Videogames (not included, not free, you must license this music somehow or copy goldberg-aria-da-capo.wav over it)
+
+example.csd - Example from CSOUND Manual - Licensed as such
+grain.csd - Offline Granular Synthesis Experiment meant mostly for heavy time stretching
+grainui.csd - UI Drive Granular Synthesis Experiment meant mostly for heavy time stretching.
+
+LICENSE: Assume CC0/Public Domain on all of this except the example.csd and videogames.wav (not included).
+
+To run try:
+
+csound grain.csd
+csound grainui.csd
+
+There are csound options specified in the csd file.
