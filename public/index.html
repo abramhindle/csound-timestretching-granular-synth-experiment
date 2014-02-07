@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Granular!</title>
+<meta charset="utf-8"/>
+</head>
+<body>
+<style>
+.slider {
+   position: relative;
+   float: right;
+   width: 75%;
+}
+.grain {
+   margin: 1em;
+   border:1px solid black;
+}
+</style>
+<script src="jquery-1.11.0.min.js"></script>
+<div class="grains">
+<div id="slave01" class="grain">
+<h6 class="name">Slave01</h6>
+<p>
+gkFreq: <input type="range" class="slider" id="gkFreq" min="0" max="100" step="1"
+               /></p>
+<p>
+gkFreqRand: <input type="range" class="slider" id="gkFreqRand" min="0" max="100" step="1" /></p>
+gkDens: <input type="range" class="slider" id="gkDens" min="0"
+               max="100" step="1" /></p>
+gkDur: <input type="range" class="slider" id="gkDur" min="0" max="100"
+              step="1" /></p>
+gkPhase: <input type="range" class="slider" id="gkPhase" min="0"
+                max="100" step="1" /></p>
+gkPhaseMix: <input type="range" class="slider" id="gkPhaseMix" min="0" max="100" step="1" /></p>
+</div>
+</div>
+<script>
+function sendUpdate(oschost, path, value) {
+    var msg = {"queue":[[oschost,"/grain/"+path,"f",value]]};
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState==4) {
+            try {
+                if (xhr.status==200) {
+                    var text = xhr.responseText;
+                }
+            } 
+            catch(e) {
+                alert('Error: ' + e.name);
+            }
+        }
+    };
+    xhr.open("POST","http://"+window.location.host+"/osc");
+    xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.send( JSON.stringify( msg ) );
+}
+
+var scales = {
+  gkFreq : 0.01,
+  gkFreqRand: 0.01,
+  gkDens: 500,
+  gkDur: 0.5,
+  gkPhase: 1.0,
+  gkPhaseMix: 1.0
+}
+var slavenames = [];
+var nslaves = 32;
+for (var i = 0 ; i < nslaves; i++) {
+    slavenames[i] = (i < 9)?"slave0"+(i+1):"slave"+(i+1);
+}
+var slave = $("#"+slavenames[0])[0];
+var grainsDiv = $(".grains")[0];
+for (var i = 1 ; i < nslaves; i++) {
+    var newslave = slave.cloneNode(true);
+    newslave.id = slavenames[i];                     
+    newslave.children[0].innerHTML = slavenames[i];
+    grainsDiv.appendChild( newslave );    
+}
+$(".slider").click(function() {
+    var value = $( this ).val();
+    var key = this.id;
+    var newv = scales[key] * value / 100.0;
+    var id = $( this ).parents(".grain")[0].id;
+    sendUpdate(id, key, newv);
+});
+
+</script>
+
+</body>
+</html>
