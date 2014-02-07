@@ -2,10 +2,13 @@
 <CsOptions>
 ; Select audio/midi flags here according to platform
 ; Audio out   Audio in    No messages
--odac           -iadc     -d     ;;;RT audio I/O
+;-odac           -iadc     -d     ;;;RT audio I/O
 ;
 ;-odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 2048
--odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 8192
+;-odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 8192
+; -odac           -iadc     -d    ;;;RT audio I/O
+ -odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 2048   ;;;RT audio I/O
+;-odac
 ; For Non-realtime ouput leave only the line below:
 ; -o grain3.wav -W ;;; for file output any platform
 </CsOptions>
@@ -30,6 +33,8 @@ giImpulse     ftgen   666, 0, 65536, 1,   "chicken.wav", 0, 0, 0	;mono file, dur
 giImpulse     ftgen   777, 0, 2097152, 1, "hurricane.wav", 0, 0, 0	;mono file, duration 40 seconds
 ;;; giImpulse     ftgen   888, 0, 16777216, 1, "videogames.wav", 0, 0, 0	;mono file, duration 40 seconds
 giImpulse     ftgen   999, 0, 16777216, 1, "goldberg-aria-da-capo.wav", 0, 0, 0	;mono file, duration 40 seconds
+;giImpulse     ftgen   555, 0, 16777216, 1, "yaocave-1-xanadu-wurlitzer-jujube.wav", 0, 0, 0	;mono file
+; giImpulse     ftgen   444, 0, 16777216, 1, "ma-vlast.wav", 0, 0, 0	;mono file
 
 gkFreq init 1
 gkFreqRand init 0.001
@@ -41,7 +46,7 @@ gkPhaseMix init 1
 
 
 FLcolor	180,200,199
-FLpanel 	"Mixer",250,300
+FLpanel 	"Granular",250,300
     istarttim = 0
     idropi = 666
     idur = 1
@@ -138,7 +143,7 @@ akPhase butterlp  a(gkPhase), 10
 kkPhase downsamp akPhase
 kphs = gkPhaseMix*(kkPhase +  kphs1) + (1 - gkPhaseMix)*(kphsL)
 kphs limit kphs, 0, 1
-
+printks "gkAmp = %f, gkFreq = %f, gkFreqRand = %f, gkDens = %f, gkDur = %f, gkPhase = %f, gkPhaseMix = %f\\n", 1, gkAmp, gkFreq, gkFreqRand, gkDens, gkDur, gkPhase, gkPhaseMix
 /* Syntax
 
 ares grain3 kcps, kphs, kfmd, kpmd, kgdur, kdens, imaxovr, kfn, iwfn, \
@@ -167,6 +172,16 @@ a1	grain3	kfrq, kphs, kfmd, kfmd, kgdur, kdens, 601,		\
 
 t 0 60
 ;i 777 0 3600  1000   0.00236570835113525390 888
+;i 777 0 3600  1000   0.00236570835113525390 999
+;i 777 0 3600  1000   0.00236570835113525390 555
+;i 777 0 3600  1000   0.00236570835113525390 444
+;i 777 0 3600  1000   0.00236570835113525390 555
+
+;i 777 0 3600  1000   0.00236570835113525390 555
+;i 777 0 3600  1000   0.00236570835113525390 888
+
+;i 777 0 3600  1000   0.00236570835113525390 777
+
 i 777 0 3600  1000   0.00236570835113525390 999
 
 ;i 1 0 3
