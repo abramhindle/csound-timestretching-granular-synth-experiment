@@ -2,10 +2,8 @@
 <CsOptions>
 ; Select audio/midi flags here according to platform
 ; Audio out   Audio in    No messages
--odac           -iadc     -d     ;;;RT audio I/O
-;
-;-odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 2048
--odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 8192
+; -odac           -iadc     -d    ;;;RT audio I/O
+ -odac           -iadc     -d  -+rtaudio=jack -+jack_client=csoundGrain  -b 441 -B 2048   ;;;RT audio I/O
 ; For Non-realtime ouput leave only the line below:
 ; -o grain3.wav -W ;;; for file output any platform
 </CsOptions>
@@ -24,58 +22,34 @@ sr	=  44100
 kr	=  100
 ksmps   =  441
 nchnls	=  1
+0dbfs = 1.1
 
 /* f#  time  size  1  filcod  skiptime  format  channel */
-giImpulse     ftgen   666, 0, 65536, 1,   "chicken.wav", 0, 0, 0	;mono file, duration 0.750
-giImpulse     ftgen   777, 0, 2097152, 1, "hurricane.wav", 0, 0, 0	;mono file, duration 40 seconds
-;;; giImpulse     ftgen   888, 0, 16777216, 1, "videogames.wav", 0, 0, 0	;mono file, duration 40 seconds
+;;;giImpulse     ftgen   666, 0, 65536, 1,   "chicken.wav", 0, 0, 0	;mono file, duration 0.750
+ giImpulse     ftgen   777, 0, 2097152, 1, "hurricane.wav", 0, 0, 0	;mono file, duration 40 seconds
+;;;giImpulse     ftgen   888, 0, 16777216, 1, "videogames.wav", 0, 0, 0	;mono file, duration 40 seconds
 giImpulse     ftgen   999, 0, 16777216, 1, "goldberg-aria-da-capo.wav", 0, 0, 0	;mono file, duration 40 seconds
+;giImpulse     ftgen   555, 0, 16777216, 1, "yaocave-1-xanadu-wurlitzer-jujube.wav", 0, 0, 0	;mono file
+; giImpulse     ftgen   444, 0, 16777216, 1, "ma-vlast.wav", 0, 0, 0	;mono file
 
-gkFreq init 1
+gkFreq init 0.0085
 gkFreqRand init 0.001
-gkAmp init 1000
-gkDens init 498
-gkDur init 0.2
-gkPhase init 0
-gkPhaseMix init 1
+gkAmp init 0.125
+gkDens init 253
+gkDur init 0.014
+gkPhase init rnd(0.99)
+gkPhaseMix init rnd(0.5)
 
+giosc OSCinit 3666
 
-FLcolor	180,200,199
-FLpanel 	"Mixer",250,300
-    istarttim = 0
-    idropi = 666
-    idur = 1
-    ibox0  FLbox  "Grain", 1, 6, 12, 300, 20, 0, 0
-    ;FLsetFont   7, ibox0
-                
-    gkFreq,    iknob1 FLknob  "Freq", 0.00001, 2, -1,1, -1, 50, 0,0
-    gkFreqRand,    iknob2 FLknob  "FreqRand", 0.0001, 0.2, -1,1, -1, 50, 50,0
-    gkAmp,    iknob3 FLknob  "Amp", 0.0001, 10000, -1,1, -1, 50, 100,0
-    gkDens,    iknob4 FLknob  "Dens", 1, 600, -1,1, -1, 50, 150,0
-    gkDur,    iknob5 FLknob  "Dur", 0.01, 1.0, -1,1, -1, 50, 200,0
-    ;kout, ihandle FLslider "label", imin, imax, iexp, itype, idisp, iwidth, \
-    ;  iheight, ix, iy
-    gkPhase, islider1 FLslider "Phase", 0, 1, 0, 1, -1, 250, 50, 0, 100
-    ;kout, ihandle FLknob "label", imin, imax, iexp, itype, idisp, iwidth, \
-    ;  ix, iy [, icursorsize]
-    gkPhaseMix,    iknob6 FLknob  "PhaseMix", 0, 1.0, 0,1, -1, 50, 200,150
-    FLsetVal_i   1.0, iknob1
-    FLsetVal_i   0.001, iknob2
-    FLsetVal_i   1000, iknob3
-    FLsetVal_i   498, iknob4
-    FLsetVal_i   0.2, iknob5
-    FLsetVal_i   0.0, islider1
-    FLsetVal_i   1.0, iknob6
-    
-    
-    
-FLpanel_end	;***** end of container
-
-FLrun		;***** runs the widget thread 
-
-
-
-
+instr OscSetter
+      kk  OSClisten giosc, "/grain/gkFreq", "f", gkFreq
+      kk  OSClisten giosc, "/grain/gkFreqRand", "f", gkFreqRand
+      kk  OSClisten giosc, "/grain/gkDens", "f", gkDens
+      kk  OSClisten giosc, "/grain/gkDur", "f", gkDur
+      kk  OSClisten giosc, "/grain/gkPhase", "f", gkPhase
+      kk  OSClisten giosc, "/grain/gkPhaseMix", "f", gkPhaseMix
+endin
 
 
 /* Bartlett window */
@@ -99,6 +73,7 @@ iseed	=  1			; random seed
 ;;; kphs	oscili 0.5, 1, 4	; phase
 kphs	linen 1, idur, idur, 0
 kfnum     = k(p6)
+
 
 /* Syntax
 
@@ -132,12 +107,17 @@ kdens	=  gkDens		; density
 iseed	=  1			; random seed
 kfnum     = k(p6)
 ;kphs1	linen 1, idur, idur, 0
-kphsL	linen 1, idur, idur, 0
+;kph     phasor  100/idur
+;printks "kph = %f\n", 1, kph
+;kphsL	linen 1, idur, idur, 0
+kphsL   phasor, 1/idur
 kphs1	oscili 0.001, 1/30, 4	; phase
 akPhase butterlp  a(gkPhase), 10
 kkPhase downsamp akPhase
 kphs = gkPhaseMix*(kkPhase +  kphs1) + (1 - gkPhaseMix)*(kphsL)
 kphs limit kphs, 0, 1
+
+printks "gkAmp = %f, gkFreq = %f, gkFreqRand = %f, gkDens = %f, gkDur = %f, gkPhase = %f, gkPhaseMix = %f\\n", 1, gkAmp, gkFreq, gkFreqRand, gkDens, gkDur, gkPhase, gkPhaseMix
 
 /* Syntax
 
@@ -167,7 +147,17 @@ a1	grain3	kfrq, kphs, kfmd, kfmd, kgdur, kdens, 601,		\
 
 t 0 60
 ;i 777 0 3600  1000   0.00236570835113525390 888
-i 777 0 3600  1000   0.00236570835113525390 999
+;i 777 0 3600  1000   0.00236570835113525390 999
+;i 777 0 3600  1000   0.00236570835113525390 555
+;i 777 0 3600  1000   0.00236570835113525390 444
+;i 777 0 3600  1000   0.00236570835113525390 555
+
+;i 777 0 3600  1000   0.00236570835113525390 555
+;i 777 0 3600  1000   0.00236570835113525390 888
+;i 777 0 3600  1000   0.00236570835113525390 777
+i 777 0 360000  1000   0.00236570835113525390 999
+
+i"OscSetter" 0 360000
 
 ;i 1 0 3
 ;i 2 4 3
