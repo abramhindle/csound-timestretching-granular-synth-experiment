@@ -43,12 +43,19 @@ gkPhaseMix init rnd(0.5)
 giosc OSCinit 3666
 
 instr OscSetter
+      kpfreq init 0
+      kk  OSClisten giosc, "/grain/gkAmp", "f", gkAmp
       kk  OSClisten giosc, "/grain/gkFreq", "f", gkFreq
       kk  OSClisten giosc, "/grain/gkFreqRand", "f", gkFreqRand
       kk  OSClisten giosc, "/grain/gkDens", "f", gkDens
       kk  OSClisten giosc, "/grain/gkDur", "f", gkDur
       kk  OSClisten giosc, "/grain/gkPhase", "f", gkPhase
       kk  OSClisten giosc, "/grain/gkPhaseMix", "f", gkPhaseMix
+      kk  OSClisten giosc, "/ping/freq","f", kpfreq
+      if (kk==0) goto ex
+      event "i", 888, 0.0, 0.02, 0.5, kpfreq
+      ex:
+
 endin
 
 
@@ -58,6 +65,14 @@ itmp	ftgen 1, 0, 16384, 20, 3, 1
 itmp	ftgen 2, 0, 16384, 7, 1, 16384, -1
 /* sine */
 itmp	ftgen 4, 0, 1024, 10, 1
+
+instr 888
+	idur = p3
+	iamp = p4
+	ifreq = p5
+aa      oscili iamp, ifreq, 4
+	out aa
+endin
 
 	instr 666
 kdur	= k(p3)
