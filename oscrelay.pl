@@ -28,6 +28,8 @@ use Data::Dumper;
 use Net::OpenSoundControl::Client;
 my %allowed = map { $_ => $_ } 
     qw( 
+          /grain/gkAmp
+          /ping/freq
           /grain/gkFreq
           /grain/gkFreqRand
           /grain/gkDens
@@ -90,6 +92,7 @@ sub oscResponder {
   my $state = {"ok"=>"ok"};
   my $str = encode_json($state);
   # do we need some raw crap
+  $self->res->headers->header('Access-Control-Allow-Origin' => '*');
   $self->respond_to(any => {data=>$str}, status => 200);
 }
 
