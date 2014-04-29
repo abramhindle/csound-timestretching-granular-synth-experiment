@@ -1,6 +1,6 @@
 use Net::OpenSoundControl::Client;
 use strict;
-my $oschost = "127.0.0.1";
+my $oschost = $ARGV[0] || "127.0.0.1";
 my $oscport = 3666;
 {
   my $client = undef;
